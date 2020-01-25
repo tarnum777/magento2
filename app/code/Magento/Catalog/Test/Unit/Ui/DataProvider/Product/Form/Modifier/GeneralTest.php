@@ -6,6 +6,7 @@
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\General;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Eav\Api\Data\AttributeInterface;
@@ -78,18 +79,22 @@ class GeneralTest extends AbstractModifierTest
 
     /**
      * @param array $data
-     * @param int $defaultStatusValue
+     * @param int $productStatusValue
+     * @param $defaultStatusValue
      * @param array $expectedResult
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      * @dataProvider modifyDataDataProvider
      */
-    public function testModifyDataNewProduct(array $data, int $defaultStatusValue, array $expectedResult)
+    public function testModifyDataNewProduct(array $data, $productStatusValue, $defaultStatusValue, array $expectedResult)
     {
         $attributeMock = $this->getMockBuilder(AttributeInterface::class)
             ->getMockForAbstractClass();
         $attributeMock
             ->method('getDefaultValue')
             ->willReturn($defaultStatusValue);
+        $this->productMock->method('getStatus')
+            ->willReturn($productStatusValue);
+
         $this->attributeRepositoryMock
             ->method('get')
             ->with(
@@ -108,6 +113,7 @@ class GeneralTest extends AbstractModifierTest
         return [
             'With default status value' => [
                 'data' => [],
+                'productStatusValue' => null,
                 'defaultStatusAttributeValue' => 5,
                 'expectedResult' => [
                     null => [
@@ -119,11 +125,36 @@ class GeneralTest extends AbstractModifierTest
             ],
             'Without default status value' => [
                 'data' => [],
+                'productStatusValue' => null,
                 'defaultStatusAttributeValue' => 0,
                 'expectedResult' => [
                     null => [
                         General::DATA_SOURCE_DEFAULT => [
                             ProductAttributeInterface::CODE_STATUS => 1,
+                        ],
+                    ],
+                ],
+            ],
+            'Product has status value disabled' => [
+                'data' => [],
+                'productStatusValue' => 2,
+                'defaultStatusAttributeValue' => 0,
+                'expectedResult' => [
+                    null => [
+                        General::DATA_SOURCE_DEFAULT => [
+                            ProductAttributeInterface::CODE_STATUS => '2',
+                        ],
+                    ],
+                ],
+            ],
+            'Product has status value enabled' => [
+                'data' => [],
+                'productStatusValue' => 1,
+                'defaultStatusAttributeValue' => 0,
+                'expectedResult' => [
+                    null => [
+                        General::DATA_SOURCE_DEFAULT => [
+                            ProductAttributeInterface::CODE_STATUS => '1',
                         ],
                     ],
                 ],

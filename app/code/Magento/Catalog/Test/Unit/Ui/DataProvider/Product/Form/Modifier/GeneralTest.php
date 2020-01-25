@@ -6,7 +6,6 @@
 namespace Magento\Catalog\Test\Unit\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\General;
 use Magento\Eav\Api\AttributeRepositoryInterface;
 use Magento\Eav\Api\Data\AttributeInterface;
@@ -94,7 +93,6 @@ class GeneralTest extends AbstractModifierTest
             ->willReturn($defaultStatusValue);
         $this->productMock->method('getStatus')
             ->willReturn($productStatusValue);
-
         $this->attributeRepositoryMock
             ->method('get')
             ->with(
